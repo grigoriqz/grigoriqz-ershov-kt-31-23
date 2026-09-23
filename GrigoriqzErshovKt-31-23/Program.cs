@@ -1,4 +1,6 @@
 using GrigoriqzErshovKt_31_23.Database;
+using GrigoriqzErshovKt_31_23.Middlewares;
+using GrigoriqzErshovKt_31_23.ServiceExtensions;
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using NLog.Web;
@@ -18,6 +20,7 @@ try
     builder.Services.AddSwaggerGen();
     builder.Services.AddDbContext<StudentDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    builder.Services.AddServices();
 
     var app = builder.Build();
 
@@ -27,6 +30,8 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+
+    app.UseMiddleware<ExceptionHandlerMiddleware>();
 
     app.UseAuthorization();
 
