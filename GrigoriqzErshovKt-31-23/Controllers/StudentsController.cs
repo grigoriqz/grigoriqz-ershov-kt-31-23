@@ -17,12 +17,20 @@ namespace GrigoriqzErshovKt_31_23.Controllers
             _studentService = studentService;
         }
 
-        [HttpPost(Name = "GetStudentByGroup")]
+        [HttpPost("GetStudentByGroup")]
         public async Task<IActionResult> GetStudentsByGroupAsync(StudentGroupFilter filter, CancellationToken cancellationToken)
         {
             var students = await _studentService.GetStudentsByGroupAsync(filter, cancellationToken);
 
             return Ok(students);
+        }
+
+        [HttpPost("GetGradesByGroupp")]
+        public async Task<IActionResult> GetGradesByGroupAsync(GradesGroupFilter filter, CancellationToken cancellationToken)
+        {
+            var grades = await _studentService.GetGradesByGroupAsync(filter, cancellationToken);
+
+            return Ok(grades);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace GrigoriqzErshovKt_31_23.Interfaces.StudentsInterfaces
     public interface IStudentService
     {
         public Task<Student[]> GetStudentsByGroupAsync(StudentGroupFilter filter, CancellationToken cancellationToken);
+        public Task<int[]> GetGradesByGroupAsync(GradesGroupFilter filter, CancellationToken cancellationToken);
     }
 
     public class StudentService : IStudentService
@@ -22,10 +23,19 @@ namespace GrigoriqzErshovKt_31_23.Interfaces.StudentsInterfaces
         public Task<Student[]> GetStudentsByGroupAsync(StudentGroupFilter filter, CancellationToken cancellationToken)
         {
             var students = _dbContext.Set<Student>()
-                .Where(s => s.Group.Name == filter.GroupName/* && !s.IsDeleted*/)
+                .Where(s => s.Group.Name == filter.GroupName && !s.IsDeleted)
                 .ToArrayAsync(cancellationToken);
 
             return students;
+        }
+
+        public Task<int[]> GetGradesByGroupAsync(GradesGroupFilter filter, CancellationToken cancellationToken)
+        {
+            return _dbContext.Set<Grade>()
+                .Where(g => g.Student.Group.Name == filter.GroupName && !g.Student.IsDeleted)
+                .Select(g => g.Value)
+                .Distinct()
+                .ToArrayAsync(cancellationToken);
         }
     }
 }

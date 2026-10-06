@@ -6,12 +6,13 @@ namespace GrigoriqzErshovKt_31_23.Middlewares
     {
         private readonly ILogger<ExceptionHandlerMiddleware> _logger;
         private readonly RequestDelegate _next;
-        public ExceptionHandlerMiddleware(RequestDelegate next,
-        ILogger<ExceptionHandlerMiddleware> logger)
+
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
         {
             _next = next;
             _logger = logger;
         }
+
         public async Task Invoke(HttpContext context)
         {
             try
@@ -20,41 +21,48 @@ namespace GrigoriqzErshovKt_31_23.Middlewares
             }
             catch (Exception exception)
             {
-                _logger.LogError("Exception", exception);
+                _logger.LogError(exception, "Необработанное исключение");
+
                 var httpResponse = context.Response;
                 httpResponse.ContentType = "application/json";
+
                 var responseModel = new ResponseModel<object>
                 {
                     Succeeded = false,
                     Message = exception.Message
                 };
+
                 switch (exception)
                 {
                     default:
                         httpResponse.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        responseModel.Errors = new List<string> { exception.InnerException?.Message };
+                        responseModel.Errors = new List<string> { exception.InnerException?.Message ?? exception.Message };
                         break;
                 }
+
                 await httpResponse.WriteAsJsonAsync(responseModel);
             }
         }
     }
+
     public class ResponseModel<T>
     {
         public bool Succeeded { get; set; }
-        public string Message { get; set; }
-        public List<string> Errors { get; set; }
-        public T Data { get; set; }
+        public string? Message { get; set; }
+        public List<string>? Errors { get; set; }
+        public T? Data { get; set; }
+
         public ResponseModel()
         {
         }
-        public ResponseModel(T data, string message = null)
+
+        public ResponseModel(T data, string? message = null)
         {
             Succeeded = true;
             Message = message;
             Data = data;
-           }
-    
+        }
+
         public ResponseModel(string message)
         {
             Succeeded = true;
