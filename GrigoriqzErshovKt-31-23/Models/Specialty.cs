@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace GrigoriqzErshovKt_31_23.Models
 {
     public class Specialty
@@ -6,6 +8,7 @@ namespace GrigoriqzErshovKt_31_23.Models
         public required string Title { get; set; }
         public required string Code { get; set; }
 
+        [JsonIgnore]
         public ICollection<Group> Groups { get; set; } = [];
     }
 }

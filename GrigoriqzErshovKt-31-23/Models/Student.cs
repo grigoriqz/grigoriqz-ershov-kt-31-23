@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace GrigoriqzErshovKt_31_23.Models
 {
     public class Student
@@ -9,6 +11,13 @@ namespace GrigoriqzErshovKt_31_23.Models
         public bool IsDeleted { get; set; }
 
         public Group Group { get; set; } = null!;
+
+        [JsonIgnore]
         public ICollection<Grade> Grades { get; set; } = [];
+
+        public string GetFio()
+        {
+            return $"{LastName} {FirstName}".Trim();
+        }
     }
 }

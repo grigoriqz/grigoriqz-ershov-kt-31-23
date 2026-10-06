@@ -1,3 +1,6 @@
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+
 namespace GrigoriqzErshovKt_31_23.Models
 {
     public class Group
@@ -9,6 +12,14 @@ namespace GrigoriqzErshovKt_31_23.Models
         public bool IsDeleted { get; set; }
 
         public Specialty Specialty { get; set; } = null!;
+
+        [JsonIgnore]
         public ICollection<Student> Students { get; set; } = [];
+
+        public bool IsValidGroupName()
+        {
+            return !string.IsNullOrWhiteSpace(Name)
+                && Regex.Match(Name, @"\D*-\d*-\d\d").Success;
+        }
     }
 }
